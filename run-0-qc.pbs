@@ -1,0 +1,15 @@
+#!/bin/bash
+#PBS -P xe2
+#PBS -q express
+#PBS -l walltime=24:00:00
+#PBS -l mem=31G
+#PBS -l jobfs=400GB
+#PBS -l ncpus=16
+#PBS -l wd
+#PBS -m abe
+#PBS -M pbs@kdmurray.id.au
+#PBS -N pan-qc-all
+
+module load parallel
+
+parallel bash scripts/0_qc.sh ::: a.acuminata  e.albens  e.globulus  e.marginata  e.sideroxylon  e.viminalis

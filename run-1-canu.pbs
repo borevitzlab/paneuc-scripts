@@ -1,0 +1,15 @@
+#!/bin/bash
+#PBS -P xe2
+#PBS -q normal
+#PBS -l walltime=168:00:00
+#PBS -l mem=20G
+#PBS -l jobfs=400GB
+#PBS -l ncpus=2
+#PBS -l wd
+#PBS -m abe
+#PBS -M pbs@kdmurray.id.au
+#PBS -N canu-all
+
+module load parallel
+
+parallel bash scripts/1_canu-17.sh ::: a.acuminata  e.albens  e.globulus  e.marginata  e.sideroxylon  e.viminalis

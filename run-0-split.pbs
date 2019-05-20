@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -P xe2
+#PBS -q express
+#PBS -l walltime=5:00:00
+#PBS -l mem=1G
+#PBS -l jobfs=400GB
+#PBS -l ncpus=6
+#PBS -l wd
+#PBS -j oe
+#PBS -m abe
+#PBS -M pbs@kdmurray.id.au
+#PBS -N pan-split-all
+
+module load parallel
+
+parallel bash scripts/0_asmverify_split.sh ::: a.acuminata  e.albens  e.globulus  e.marginata  e.sideroxylon  e.viminalis
+

@@ -1,0 +1,48 @@
+#!/bin/bash
+#PBS -P xe2
+#PBS -q normalbw
+#PBS -l ncpus=28
+#PBS -l walltime=24:00:00
+#PBS -l other=gdata1
+#PBS -l mem=250G
+#PBS -l jobfs=400G
+#PBS -l wd
+#PBS -m abe
+#PBS -M pbs@kdmurray.id.au
+
+
+if [ "$SPECIES" == "" ]
+then
+    echo USAGE: $0 SPECIES
+fi
+
+module load gnuplot java/jdk1.8.0_60
+
+
+set -euo pipefail # safe mode
+set -x # logging
+
+
+HERE=/g/data/xe2/projects/euc_pan_genome/
+DIR=$HERE/workspaces/$SPECIES/canu-experimental
+mkdir -p $DIR
+cd $DIR
+
+NEXT=$(qsub $HERE/scripts/canu-hugemem.pbs -v SPECIES="$SPECIES" -W depend=afterany:$PBS_JOBID )
+
+/g/data/xe2/opt/tmp/canu/Linux-amd64/bin/canu                                  \
+    -p $SPECIES                                                                \
+    -d $DIR                                                                    \
+    -correct                                                                   \
+    -nanopore-raw $HERE/workspaces/$SPECIES/reads/${SPECIES}-qcd_main.fastq.gz \
+    genomeSize=650m                                                            \
+    useGrid=false                                                              \
+    correctedErrorRate=0.2                                                     \
+    maxThreads=28                                                              \
+    maxMemory=250                                                              \
+    stageDirectory="$PBS_JOBFS"                                                \
+    java=$(which java)                                                         \
+    gnuplot=$(which gnuplot)                                                   \
+    > ${PBS_JOBID}_master.log  2>&1                                            \
+
+qdel "$NEXT"
